@@ -6,10 +6,12 @@ import com.griddynamics.jagger.engine.e1.services.DefaultDataService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ImportResource;
-import org.springframework.context.annotation.PropertySource;
-import org.springframework.context.annotation.PropertySources;
+import org.springframework.context.annotation.*;
+import springfox.documentation.builders.PathSelectors;
+import springfox.documentation.builders.RequestHandlerSelectors;
+import springfox.documentation.spi.DocumentationType;
+import springfox.documentation.spring.web.plugins.Docket;
+import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 /**
  * Spring Boot based starter.
@@ -17,6 +19,8 @@ import org.springframework.context.annotation.PropertySources;
 @PropertySources({@PropertySource("classpath:/basic/default.environment.properties")})
 @ImportResource({"classpath:/common/storage.rdb.client.conf.xml", "classpath:/spring/dbapi.config.xml"})
 @SpringBootApplication
+@EnableSwagger2
+
 public class JaasStarter {
 
     @Autowired
@@ -29,5 +33,15 @@ public class JaasStarter {
     @Bean
     public DataService getDataService() {
         return new DefaultDataService(databaseService);
+    }
+
+    @Bean
+    public Docket docket() {
+        return new Docket(DocumentationType.SWAGGER_2)
+                .groupName("NAME")
+                .select()
+                .apis(RequestHandlerSelectors.any())
+                .paths(PathSelectors.any())
+                .build();
     }
 }
