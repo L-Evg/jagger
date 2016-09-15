@@ -42,7 +42,7 @@ public abstract class AbstractMonitoringReportProvider<T> extends AbstractMapped
         }
 
         String sessionId = getSessionIdProvider().getSessionId();
-        List<PerformedMonitoring> list = (List<PerformedMonitoring>) getHibernateTemplate().find("select pf from PerformedMonitoring pf where pf.sessionId =? and pf.parentId is not null", sessionId);
+        List<PerformedMonitoring> list = getHibernateTemplate().find("select pf from PerformedMonitoring pf where pf.sessionId =? and pf.parentId is not null", sessionId);
         Map<String, String> result = Maps.newHashMap();
 
         for (PerformedMonitoring performedMonitoring : list) {
@@ -67,7 +67,7 @@ public abstract class AbstractMonitoringReportProvider<T> extends AbstractMapped
 
     protected String parentOf(String workloadTaskId) {
         String sessionId = getSessionIdProvider().getSessionId();
-        List<WorkloadData> list = (List<WorkloadData>) getHibernateTemplate().find("select wd from WorkloadData wd where wd.sessionId =? and wd.taskId =? and wd.parentId is not null", sessionId, workloadTaskId);
+        List<WorkloadData> list = getHibernateTemplate().find("select wd from WorkloadData wd where wd.sessionId =? and wd.taskId =? and wd.parentId is not null", sessionId, workloadTaskId);
 
         if (list.size() == 1) {
             return list.get(0).getParentId();

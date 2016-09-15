@@ -41,7 +41,7 @@ public class MetricTablesChecker extends HibernateDaoSupport {
 
         List<Long> maxMetricId = Collections.emptyList();
         try { //try to get the last MetricDetails entity
-            maxMetricId = (List<Long>) getHibernateTemplate().findByCriteria(
+            maxMetricId = getHibernateTemplate().findByCriteria(
                     DetachedCriteria.forClass(MetricDetails.class).setProjection(Projections.max("id"))
             );
         } catch (Exception ex) {

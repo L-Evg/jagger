@@ -161,8 +161,8 @@ public class ProfileReporter extends AbstractMonitoringReportProvider<String> {
 
         //todo JFG-722 We should delete all queries from reporting-part jagger
         @SuppressWarnings("unchecked")
-        List<ProfilingSuT> profilingSuTListFull = (List<ProfilingSuT>) getHibernateTemplate()
-                .find("from ProfilingSuT where sessionId=? and taskData_id is not null order by taskData, sysUnderTestUrl", sessionId);
+        List<ProfilingSuT> profilingSuTListFull =
+                getHibernateTemplate().find("from ProfilingSuT where sessionId=? and taskData_id is not null order by taskData, sysUnderTestUrl", sessionId);
 
         for (ProfilingSuT profilingSuT : profilingSuTListFull) {
             String taskId = profilingSuT.getTaskData().getTaskId();

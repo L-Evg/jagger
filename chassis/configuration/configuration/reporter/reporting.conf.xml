@@ -88,7 +88,7 @@
         <property name="extensions">
             <map merge="true">
                 <entry key="sessionComparison">
-                    <ref bean="defaultOverallSessionComparisonReporter"/>
+                    <ref local="defaultOverallSessionComparisonReporter"/>
                 </entry>
 
                 <entry key="sessionSummary">
