@@ -3,12 +3,6 @@
 /*.iws
 /*.log
 /.idea/
-**/*.iml
-**/*.ipr
-**/*.iws
-**/*.log
-**/.idea/
-**/target
 /archetype-examples/jagger-suite-archetype-examples.iml
 /archetype-examples/target/
 /archetype/jagger-suite-archetype.iml

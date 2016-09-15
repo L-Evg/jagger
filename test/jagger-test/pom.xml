@@ -32,6 +32,9 @@
     <name>${groupId}.${artifactId}</name>
 
     <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <jagger.targetJdkVersion>1.8</jagger.targetJdkVersion>
+        <jagger.targetJdk>${JAVA_HOME}</jagger.targetJdk>
     </properties>
 
     <dependencies>
