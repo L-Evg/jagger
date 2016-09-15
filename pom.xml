@@ -35,9 +35,7 @@
         <jagger.targetJdkVersion>1.8</jagger.targetJdkVersion>
         <jagger.targetJdk>${JAVA_HOME}</jagger.targetJdk>
 
-        <spring.version>4.3.2.RELEASE</spring.version>
-        <hibernate.validator.version>5.2.4.Final</hibernate.validator.version>
-        <hibernate.version>3.6.10.Final</hibernate.version>
+        <spring.version>4.2.2.RELEASE</spring.version>
     </properties>
 
     <modules>
@@ -51,7 +49,6 @@
         <module>test/jagger-test</module>
         <module>test/test-target</module>
         <module>archetype-examples</module>
-        <module>jaas</module>
     </modules>
 
     <scm>
@@ -251,21 +248,14 @@
             <dependency>
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-core</artifactId>
-                <version>${hibernate.version}</version>
-                <scope>compile</scope>
-            </dependency>
-
-            <dependency>
-                <groupId>org.hibernate</groupId>
-                <artifactId>hibernate-annotations</artifactId>
-                <version>${hibernate.version}</version>
+                <version>3.6.9.Final</version>
                 <scope>compile</scope>
             </dependency>
 
             <dependency>
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-entitymanager</artifactId>
-                <version>${hibernate.version}</version>
+                <version>3.6.9.Final</version>
             </dependency>
 
             <dependency>
@@ -477,7 +467,7 @@
             <dependency>
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-validator</artifactId>
-                <version>${hibernate.validator.version}</version>
+                <version>4.0.2.GA</version>
             </dependency>
 
             <dependency>
@@ -502,7 +492,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.5.1</version>
+                <version>3.3</version>
                 <configuration>
                     <target>${jagger.targetJdkVersion}</target>
                     <source>${jagger.targetJdkVersion}</source>

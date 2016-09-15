@@ -1,8 +1,7 @@
 package com.griddynamics.jagger.dbapi.provider;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
-
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 import com.griddynamics.jagger.dbapi.DataSaverService;
 import com.griddynamics.jagger.dbapi.dto.SessionDataDto;
 import com.griddynamics.jagger.dbapi.dto.TagDto;
@@ -15,22 +14,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.stereotype.Component;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
-
-import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
+import java.math.BigInteger;
+import java.util.*;
+
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Created by kgribov on 4/7/14.
@@ -283,36 +273,32 @@ public class SessionInfoProviderImpl implements SessionInfoProvider {
         checkArgument(length >= 0, "length is negative");
         checkNotNull(sessionIds, "sessionIds is null");
 
-        boolean isFetchAll = sessionIds.size() == 0; // if input set is empty - fetch all session data.
-
         long timestamp = System.currentTimeMillis();
+
         List<SessionDataDto> sessionDataDtoList;
+
         try {
-            Query query = entityManager.createQuery(
-                    "select sd from SessionData as sd " +
-                    (isFetchAll ? " " : "where sd.sessionId in (:sessionIds) ") +
-                    "order by sd.startTime asc"
-            ).setFirstResult(start);
-            if (!isFetchAll) {
-                query.setParameter("sessionIds", new ArrayList<String>(sessionIds))
-                     .setMaxResults(length);
-            }
             @SuppressWarnings("unchecked")
-            List<SessionData> sessionDataList = (List<SessionData>) query.getResultList();
+            List<SessionData> sessionDataList = (List<SessionData>)
+                    entityManager.createQuery("select sd from SessionData as sd where sd.sessionId in (:sessionIds) order by sd.startTime asc")
+                            .setParameter("sessionIds", new ArrayList<String>(sessionIds))
+                            .setFirstResult(start)
+                            .setMaxResults(length)
+                            .getResultList();
+
             if (sessionDataList.isEmpty()) {
                 return Collections.<SessionDataDto>emptyList();
             }
 
             Map<Long, String> userCommentMap = Collections.EMPTY_MAP;
+
             if (isUserCommentStorageAvailable) {
-                query = entityManager.createQuery(
-                        "select smd.sessionData.id, smd.userComment from SessionMetaDataEntity as smd "
-                        + (isFetchAll ? " " : "where smd.sessionData in (:sessionDataList)")
-                );
-                if (!isFetchAll) {
-                    query.setParameter("sessionDataList", sessionDataList);
-                }
-                List<Object[]> userComments = query.getResultList();
+
+                List<Object[]> userComments = entityManager.createQuery(
+                        "select smd.sessionData.id, smd.userComment from SessionMetaDataEntity as smd where smd.sessionData in (:sessionDataList)")
+                        .setParameter("sessionDataList", sessionDataList)
+                        .getResultList();
+
                 if (!userComments.isEmpty()) {
                     userCommentMap = new HashMap<Long, String>(userComments.size());
                     for (Object[] objects : userComments) {
@@ -320,24 +306,20 @@ public class SessionInfoProviderImpl implements SessionInfoProvider {
                     }
                 }
             }
-
             Multimap<Long, TagDto> tagMap = HashMultimap.create();
+
+            Set<Long> ids = new HashSet<Long>();
+            for (SessionData sd : sessionDataList) {
+                ids.add(sd.getId());
+            }
+
+
             if (isTagsStorageAvailable) {
-                query = entityManager.createNativeQuery(
-                        "select a.sessions_id, a.tags_name, te.description " +
-                        "from  TagEntity as te, (select distinct ste.sessions_id, ste.tags_name "
-                        + "from SessionTagEntity as ste"
-                        + (isFetchAll ? " " : " where ste.sessions_id in (:ids)) as a ")
-                        + "where a.tags_name=te.name"
-                );
-                if (!isFetchAll) {
-                    Set<Long> ids = new HashSet<Long>();
-                    for (SessionData sd : sessionDataList) {
-                        ids.add(sd.getId());
-                    }
-                    query.setParameter("ids", ids);
-                }
-                List<Object[]> sessionTags = query.getResultList();
+                List<Object[]> sessionTags = entityManager.createNativeQuery("select a.sessions_id, a.tags_name, te.description " +
+                        "from  TagEntity as te, (select distinct ste.sessions_id, ste.tags_name from SessionTagEntity as ste where ste.sessions_id in (:ids)) as a " +
+                        "where a.tags_name=te.name")
+                        .setParameter("ids", ids)
+                        .getResultList();
                 for (Object[] tags : sessionTags) {
                     Long sessionId = ((BigInteger) tags[0]).longValue();
                     tagMap.put(sessionId, new TagDto((String) tags[1], (String) tags[2]));
@@ -379,9 +361,11 @@ public class SessionInfoProviderImpl implements SessionInfoProvider {
             if (ids.isEmpty()){
                 return Collections.<SessionDataDto>emptyList();
             }
+
             for (BigInteger id : ids) {
                 sessionIds.add(id.longValue());
             }
+
             @SuppressWarnings("unchecked")
             List<SessionData> sessionDataList = (List<SessionData>) entityManager.createQuery("SELECT sd from SessionData as sd where sd.id in (:sessionIds)")
                     .setParameter("sessionIds", sessionIds)
