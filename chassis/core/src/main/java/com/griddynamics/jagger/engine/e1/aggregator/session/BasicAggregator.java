@@ -20,14 +20,7 @@
 
 package com.griddynamics.jagger.engine.e1.aggregator.session;
 
-import static com.griddynamics.jagger.engine.e1.collector.CollectorConstants.END_TIME;
-import static com.griddynamics.jagger.engine.e1.collector.CollectorConstants.ERROR_MESSAGE;
-import static com.griddynamics.jagger.engine.e1.collector.CollectorConstants.FAILED;
-import static com.griddynamics.jagger.engine.e1.collector.CollectorConstants.KERNELS_COUNT;
-import static com.griddynamics.jagger.engine.e1.collector.CollectorConstants.SESSION;
-import static com.griddynamics.jagger.engine.e1.collector.CollectorConstants.START_TIME;
-import static com.griddynamics.jagger.engine.e1.collector.CollectorConstants.TASK_EXECUTED;
-
+import com.google.common.collect.Multimap;
 import com.griddynamics.jagger.coordinator.NodeId;
 import com.griddynamics.jagger.coordinator.NodeType;
 import com.griddynamics.jagger.dbapi.entity.SessionData;
@@ -48,14 +41,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 
-import com.google.common.collect.Multimap;
-
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Set;
+import java.util.List;
+
+import static com.griddynamics.jagger.engine.e1.collector.CollectorConstants.*;
 
 /**
  * Aggregates generic session/task data from key-value storage and stores to
@@ -117,6 +110,7 @@ public class BasicAggregator extends HibernateDaoSupport implements Distribution
         sessionData.setErrorMessage(errorMessage);
         getHibernateTemplate().persist(sessionData);
         persistTags(sessionId, sessionMetaDataStorage);
+
     }
 
     public void setKeyValueStorage(KeyValueStorage keyValueStorage) {

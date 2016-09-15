@@ -29,5 +29,4 @@ package com.griddynamics.jagger.master.configuration;
 public interface Task {
     String getTaskName();
     int getNumber();
-    void setNumber(int number);
 }

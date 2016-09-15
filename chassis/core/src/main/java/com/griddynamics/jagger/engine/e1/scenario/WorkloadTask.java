@@ -20,15 +20,14 @@
 
 package com.griddynamics.jagger.engine.e1.scenario;
 
+import com.google.common.collect.Lists;
 import com.griddynamics.jagger.engine.e1.Provider;
-import com.griddynamics.jagger.engine.e1.collector.Validator;
+import com.griddynamics.jagger.engine.e1.collector.*;
 import com.griddynamics.jagger.engine.e1.collector.invocation.InvocationListener;
 import com.griddynamics.jagger.engine.e1.collector.limits.LimitSet;
 import com.griddynamics.jagger.engine.e1.collector.test.TestListener;
 import com.griddynamics.jagger.invoker.ScenarioFactory;
 import com.griddynamics.jagger.master.CompositableTask;
-
-import com.google.common.collect.Lists;
 
 import java.util.List;
 
@@ -71,8 +70,7 @@ public class WorkloadTask implements CompositableTask {
     public int getNumber() {
         return number;
     }
-    
-    @Override
+
     public void setNumber(int number) {
         this.number = number;
     }
