@@ -41,7 +41,6 @@ import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 
 
 public class ReportingServiceTest {
@@ -88,9 +87,7 @@ public class ReportingServiceTest {
         Source xmlFile = new StreamSource(new File("result.xml"));
         SchemaFactory schemaFactory = SchemaFactory
                 .newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-
-        URL reportUrl = getClass().getResource("/reporting/test-xml-report.xsd");
-        Schema schema = schemaFactory.newSchema(reportUrl);
+        Schema schema = schemaFactory.newSchema(new File("src/test/resources/reporting/test-xml-report.xsd"));
         Validator validator = schema.newValidator();
         validator.validate(xmlFile);
         assertTrue(new File("result.xml").delete());

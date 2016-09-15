@@ -43,8 +43,7 @@ public class FlushingWorker<C extends Command<R>, R extends Serializable> implem
                 new Function<CommandExecutor<?, ?>, CommandExecutor<?, ?>>() {
                     @Override
                     public CommandExecutor<?, ?> apply(CommandExecutor<?, ?> input) {
-                        Object flushingCommandExecutor = FlushingCommandExecutor.create(input);
-                        return (CommandExecutor<?, ?>) flushingCommandExecutor;
+                        return FlushingCommandExecutor.create(input);
                     }
                 });
     }

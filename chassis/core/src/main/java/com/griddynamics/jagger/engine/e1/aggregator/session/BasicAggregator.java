@@ -45,7 +45,6 @@ import com.griddynamics.jagger.storage.Namespace;
 import org.hibernate.HibernateException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.orm.hibernate3.HibernateTemplate;
 import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 
 import com.google.common.collect.Multimap;
@@ -161,10 +160,10 @@ public class BasicAggregator extends HibernateDaoSupport implements Distribution
     }
 
     public void persistTags(String sessionId, SessionMetaDataStorage metaDataStorage) {
-        HibernateTemplate hibernateTemplate = getHibernateTemplate();
+
         for (TagEntity tagEntity : metaDataStorage.getTagsForSaveOrUpdate()) {
             try {
-                hibernateTemplate.saveOrUpdate(tagEntity);
+                getHibernateTemplate().saveOrUpdate(tagEntity);
             } catch (HibernateException e) {
                 log.error("Cannot add new tag", e);
             }
@@ -172,15 +171,15 @@ public class BasicAggregator extends HibernateDaoSupport implements Distribution
 
         if (!metaDataStorage.getSessionTags().isEmpty()) {
             Set<TagEntity> sessionTagList = new HashSet<TagEntity>();
-            sessionTagList.addAll((Collection<? extends TagEntity>) hibernateTemplate.findByNamedParam("select tags from TagEntity as tags " +
+            sessionTagList.addAll(getHibernateTemplate().findByNamedParam("select tags from TagEntity as tags " +
                     "where tags.name in (:sTagsName)", "sTagsName", metaDataStorage.getSessionTags()));
 
             if (!sessionTagList.isEmpty()) {
-                List<SessionData> sessionsById = (List<SessionData>) hibernateTemplate.find("from SessionData s where s.sessionId=?", sessionId);
+                List<SessionData> sessionsById = getHibernateTemplate().find("from SessionData s where s.sessionId=?", sessionId);
                 if (sessionsById.size()==1)
                     for (SessionData sessionData : sessionsById) {
                         sessionData.setTags(sessionTagList);
-                        hibernateTemplate.saveOrUpdate(sessionData);
+                        getHibernateTemplate().saveOrUpdate(sessionData);
                     }
                 else
                     log.error("Must be one session's id which is equals {}, but got {} ids",sessionId,sessionsById.size());
