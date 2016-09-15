@@ -50,9 +50,7 @@ public interface SessionInfoProvider {
      * @return list of SessionDataDto */
     List<SessionDataDto> getByDatePeriod(int offset, int maxResult, Date from, Date to) throws RuntimeException;
 
-    /**
-     * Returns a list of sessions with specified ids.
-     * If input session ids are an empty set - returns all sessions.
+    /** Returns a list of sessions with specified ids
      * @param offset - select sessions from this position
      * @param maxResult - a number of max results
      * @param sessionIds - - a set of sessions ids
